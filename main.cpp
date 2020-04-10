@@ -60,7 +60,6 @@ BOOL CALLBACK MainDlgProc( HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	static HWND hPict1;		//ウィンドウハンドル（PictureBox）
 	static HWND hPict2;
-	static HFONT hFont;				//フォント
 	static HANDLE hThread;
 	static UINT thID;
 	static SEND_POINTER_STRUCT Sps;
@@ -336,12 +335,9 @@ UINT WINAPI TFunc(LPVOID thParam)
 	double data[2];	//データ
 	double data_plot[2];		//ウィンドウサイズに合わせたデータ
 	int width[2], height[2];	//ウィンドウのサイズ
-	int tmp[2]; //現在（ループ）の回のプロット点のy座標
 	int pos_x[2], pos_y[2];	//1週前のプロット点の位置
 
 	DWORD DNum = 0, beforeTime;
-
-	int time = 0, min = 0;
 
 	//現在の時刻計算（初期時間）
 	beforeTime = timeGetTime();
