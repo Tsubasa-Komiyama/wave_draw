@@ -164,13 +164,11 @@ HRESULT CALLBACK WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 	HPEN		hPen, hOldPen;		//ペン
 	int width, height;
 
-	switch(uMsg){
-	case WM_CREATE:
+	if (WM_PAINT == uMsg) {
+
 		color1 = RGB(255, 255, 255);	//色指定（白）
 		color2 = RGB(0, 0, 0);	//色指定（黒）
-		break;
-
-	case WM_PAINT:
+		color3 = RGB(0, 0, 255);	//色指定（青）
 
 		/********************************
 
@@ -208,7 +206,7 @@ HRESULT CALLBACK WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 
 		 nLiftRect：長方形の左上X座標
 		  nTopRect：左上Y座標
-          nRightRect：右下X座標
+		  nRightRect：右下X座標
 		  nBottomRect：右下のY座標
 
 		線を引くには以下の関数を用います．
@@ -238,7 +236,7 @@ HRESULT CALLBACK WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 		//横軸のラベル
 		SetBkColor(hdc, color2);
 		SetTextColor(hdc, color1);
-		TextOut(hdc, width * 0.45, height * 0.8, TEXT("Time [s]"),8);		//テキスト描画
+		TextOut(hdc, width * 0.45, height * 0.8, TEXT("Time [s]"), 8);		//テキスト描画
 
 		//ペン，ブラシ廃棄
 		/********************************
@@ -246,15 +244,14 @@ HRESULT CALLBACK WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 		使い終わったペンとブラシは破棄する必要があります．
 
 		********************************/
-		SelectObject(hdc, hOldBrush );
-		DeleteObject( hBrush );
-		SelectObject(hdc, hOldPen );
-		DeleteObject( hPen );
+		SelectObject(hdc, hOldBrush);
+		DeleteObject(hBrush);
+		SelectObject(hdc, hOldPen);
+		DeleteObject(hPen);
 
 		//デバイスコンテキストのハンドル破棄
 		EndPaint(hWnd, &ps);
-		break;
-	}
+	}	
 
 	return TRUE;
 }
@@ -367,7 +364,28 @@ UINT WINAPI TFunc(LPVOID thParam)
 		pos_y[i] = height[i] * 0.5;
 	}
 
+	for (int i = 0; i < 2; i++) {
+		//ペン設定
+		hOldBrush[i] = (HBRUSH)SelectObject(hdc[i], hBrush);	//ブラシ設定
+		hOldPen[i] = (HPEN)SelectObject(hdc[i], hPen1);
 
+		//背景を黒にする
+		Rectangle(hdc[i], 0, 0, width[i] + 1, height[i] + 1);
+
+		//縦軸
+		MoveToEx(hdc[i], (int)(width[i] * 0.1), 0, NULL);		  //線の始点を決定
+		LineTo(hdc[i], (int)(width[i] * 0.1), height[i]);				    //線の終点を決定し、線を描画
+
+		//横軸
+		MoveToEx(hdc[i], (int)(width[i] * 0.1), (int)(height[i] * 0.5), NULL);
+		LineTo(hdc[i], width[i], (int)(height[i] * 0.5));
+
+		//横軸のラベル
+		SetBkColor(hdc[i], color2);
+		SetTextColor(hdc[i], color1);
+		TextOut(hdc[i], (int)(width[i] * 0.45), (int)(height[i] * 0.8), TEXT("Time [s]"), 8);		//テキスト描画
+
+	}
 
 	//ファイルオープン
 	if ((fp = fopen("data.txt", "r")) == NULL) {
