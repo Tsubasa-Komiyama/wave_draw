@@ -251,7 +251,7 @@ HRESULT CALLBACK WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 
 		//デバイスコンテキストのハンドル破棄
 		EndPaint(hWnd, &ps);
-	}	
+	}
 
 	return TRUE;
 }
@@ -416,7 +416,7 @@ UINT WINAPI TFunc(LPVOID thParam)
 
 		//ファイルから読み取ったデータをウィンドウに合うよう調整
 		for (int i = 0; i < 2; i++){
-			data_plot[i] = (data[i] * height[i] / 2  * 0.9) + height[i] / 2;
+			data_plot[i] = (-data[i] * height[i] / 2  * 0.9) - height[i] / 2;
 		}
 
 		//波形の描画
